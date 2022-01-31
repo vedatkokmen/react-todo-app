@@ -9,7 +9,6 @@ import {
   Button,
   useToast,
 } from "@chakra-ui/react";
-
 import { ViewIcon } from "@chakra-ui/icons";
 
 import { useEffect, useState } from "react";
@@ -23,6 +22,10 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [hideCompleted, setHideCompleted] = useState(false);
   const [activeTodos, setActiveTodos] = useState([]);
+
+  useEffect(() => {
+    fetchTodos();
+  }, []);
 
   const fetchTodos = async () => {
     try {
@@ -44,14 +47,14 @@ function App() {
         title: `Todo deleted`,
         status: "info",
         isClosable: true,
-        duration: 1000,
+        duration: 2000,
       });
     } catch (error) {
       toast({
         title: `${error.message}`,
         status: "error",
         isClosable: true,
-        duration: 1000,
+        duration: 2000,
       });
     }
   };
@@ -98,15 +101,26 @@ function App() {
     setActiveTodos(filtered);
   };
 
-  useEffect(() => {
-    fetchTodos();
-  }, []);
+  if (loading) {
+    <Container centerContent>
+      <Spinner
+        thickness="4px"
+        speed="0.65s"
+        emptyColor="gray.200"
+        color="blue.500"
+        size="xl"
+      />
+    </Container>;
+  }
 
   return (
     <Center h={"100vh"} bg={"gray.50"}>
       <Container
-        py={10}
+        pt={10}
         bg={"white"}
+        h={"75vh"}
+        mx={2}
+        overflow={["hidden", "scroll"]}
         borderRadius={6}
         boxShadow={
           "0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)"
@@ -134,17 +148,7 @@ function App() {
 
         <Stack gap={4}>
           <Add addNewTodo={addNewTodo} />
-          {loading && (
-            <Container centerContent>
-              <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="blue.500"
-                size="xl"
-              />
-            </Container>
-          )}
+
           <Box>
             {hideCompleted
               ? activeTodos.map((todo) => {
